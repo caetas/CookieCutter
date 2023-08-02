@@ -79,7 +79,7 @@ git checkout main
 git merge cookiecutter
 git push --set-upstream origin main
 ```
-**In the repository settings, change the default branch to main. You can delete the other branches if you wish.**
+**You can delete the other branches if you wish.**
 Head over to the generated README.md file to read about the next steps and a more in-depth explanation of the generated project's
 features.
 
