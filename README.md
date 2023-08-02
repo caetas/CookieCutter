@@ -72,7 +72,7 @@ command after the generated `coookicutter` project template. The new version aut
 
 ```
 cd <repo_name>
-git remote add origin ssh://git@git.fraunhofer.pt/<project_name>/<repo_name>.git
+git remote add origin <repo_ssh>
 git push --all
 git push origin --tags
 ```
