@@ -61,7 +61,7 @@ $ conda install cookiecutter
 Generate a data science project from this template:
 
 ```
-cookiecutter https://github.com/caetas/CookieCutter.git
+cookiecutter git@github.com:caetas/CookieCutter.git
 ```
 
 Follow the prompts; if you are asked to re-download the cookiecutter template, input `yes`.

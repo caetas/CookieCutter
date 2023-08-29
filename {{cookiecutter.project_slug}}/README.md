@@ -29,7 +29,7 @@ You will need:
 
 Clone this repository (requires git ssh keys)
 
-    git clone --recursive ssh://git@git.fraunhofer.pt/{{cookiecutter.project_name}}/{{cookiecutter.project_slug}}.git
+    git clone --recursive ssh://git@github.com/{{cookiecutter.project_name}}/{{cookiecutter.project_slug}}.git
     cd {{ cookiecutter.project_slug }}
 
 Install dependencies
