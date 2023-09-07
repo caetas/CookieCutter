@@ -78,6 +78,8 @@ git push origin --tags
 git checkout main
 git merge cookiecutter
 git push --set-upstream origin main
+git branch -d cookiecutter
+git push origin --delete cookiecutter
 ```
 **You can delete the other branches if you wish.**
 Head over to the generated README.md file to read about the next steps and a more in-depth explanation of the generated project's
