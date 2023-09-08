@@ -85,7 +85,7 @@ See [LICENSE](LICENSE) for more details.
 If you publish work that uses {{ cookiecutter.project_name }}, please cite {{ cookiecutter.project_name }} as follows:
 
 ```bibtex
-{% raw %}@misc{{% endraw %}{{ cookiecutter.project_name }} {{ cookiecutter.repo_name }},
+{% raw %}@misc{{% endraw %}{{ cookiecutter.project_name }},
   author = {% raw %}{{% endraw %}{{ cookiecutter.organization }}{% raw %}}{% endraw %},
   title = {% raw %}{{% endraw %}{{ cookiecutter.description }}{% raw %}}{% endraw %},
   year = {% raw %}{{% endraw %}{% now 'utc', '%Y' %}{% raw %}}{% endraw %},
