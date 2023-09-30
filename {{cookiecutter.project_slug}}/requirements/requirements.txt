@@ -12,10 +12,9 @@ loguru>=0.5.0
 # hydra-ray-launcher
 # hydra-submitit-launcher
 mlflow-skinny==1.28.0
-numpy==1.22.4
+numpy
 psycopg2-binary==2.9.2
 # Python-dotenv reads key-value pairs from a .env file and can set them as environment variables.
 # It helps in the development of applications following the 12-factor (https://12factor.net/) principles.
 python-dotenv==0.19.2
-s3fs==2022.1.0
-zulip==0.8.2
+s3fs
