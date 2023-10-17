@@ -44,14 +44,7 @@ or if environment already exists
 
 And then setup all virtualenv using make file recipe
 
-    ({{cookiecutter.project_slug}}) $ make setup-all
-
-Use pre-commit hooks to standardize code formatting of your project and save mental energy.
-Simply install pre-commit package and pre-commit hooks with:
-
-    make install-pre-commit
-
-After that your code will be automatically reformatted on every new commit.
+    ({{cookiecutter.minimal_python_version}}) $ make setup-all
 
 ## Documentation
 
