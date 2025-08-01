@@ -12,8 +12,7 @@ So, here’s a simple template that help you get into your main project faster a
 Once generated, the package skeletons have the following features:
 
 - Good base folder structure for many kinds of ML Projects (see below);
-- Using `conda` format to manage virtual environments and dependencies;
-- Testing setup with `pytest` with `coverage` plugin;
+- Using `uv` format to manage virtual environments and dependencies;
 - Type checks with [`mypy`](https://mypy.readthedocs.io);
 - Docstring checks with [`darglint`](https://github.com/terrencepreilly/darglint);
 - Security checks with [`safety`](https://github.com/pyupio/safety) and [`bandit`](https://github.com/PyCQA/bandit);
@@ -35,25 +34,16 @@ This includes folder structure, testing and documentation tools which should wor
 
 ### Requirements to use the cookiecutter template:
 
-- Anaconda (or miniconda)
-- Python 3.6+  (we use f-strings. So should you)
-- GNU make
-- GNU sed
+- uv
+- Python 3.10+  (we use f-strings. So should you)
 - [direnv](https://github.com/direnv/direnv)
-- [Cookiecutter Python package](http://cookiecutter.readthedocs.org/en/latest/installation.html) >= 1.4.0:
+- [Cookiecutter Python package](http://cookiecutter.readthedocs.org/en/latest/installation.html):
   This can be installed with pip by or conda depending on how you manage your Python packages:
 
-once you've installed anaconda, you can install the remaining requirements (including cookiecutter) by doing:
+Install cookiecutter by running:
 
 ```bash
-$ pip3 install -r requirements.txt
-```
-
-or
-
-```bash
-$ conda config --add channels conda-forge
-$ conda install cookiecutter
+$ pip install -r requirements.txt
 ```
 
 ### To start a new project, run:
@@ -80,6 +70,10 @@ git merge cookiecutter
 git push --set-upstream origin main
 git branch -d cookiecutter
 git push origin --delete cookiecutter
+uv init --bare --python <min_version>
+uv sync --python <min_version>
+source .venv/bin/activate
+uv add dotenv fsspec s3fs toml
 ```
 **You can delete the other branches if you wish.**
 Head over to the generated README.md file to read about the next steps and a more in-depth explanation of the generated project's
@@ -98,9 +92,9 @@ The input variables, with their default values:
 | `description`            | based on the `project_name` | Brief description of your project. |
 | `organization`           | based on the `project_name` | Name of the organization. We need to generate LICENCE and to specify ownership in `pyproject.toml`. |
 | `license`                | `MIT`                       | One of `MIT`, `BSD-3`, `GNU GPL v3.0` and `Apache Software License 2.0`. |
-| `minimal_python_version` | `3.7`                       | Minimal Python version. One of `3.7`, `3.8` and `3.9`. It is used for builds and formatters (`black`, `isort` and `pyupgrade`). |
+| `minimal_python_version` | `3.11`                       | Minimal Python version. It is used for builds and formatters (`black`, `isort` and `pyupgrade`). |
 | `organization_email`     | based on the `organization` | Email for `SECURITY.md` files and to specify the ownership of the project in `pyproject.toml`. |
-| `version`                | `0.0.0`                     | Initial version of the package. Make sure it follows the [Semantic Versions](https://semver.org) specification. |
+| `version`                | `0.1.0`                     | Initial version of the package. Make sure it follows the [Semantic Versions](https://semver.org) specification. |
 | `line_length`            | 120                         | The max length per line (used for codestyle with `black` and `isort`). NOTE: This value must be between 50 and 140. |
 | `command_line_interface` | `none`                      | If `typer` is chosen generator will create simple CLI application with [`Typer`](https://github.com/tiangolo/typer) library. |
 
@@ -141,10 +135,6 @@ The directory structure of your new project looks like this:
 │
 ├── models             <- Trained and serialized models, model predictions, or model summaries
 │                         compiled model .pkl or HDFS (.h5) or .pb format (also available on Minio Server)
-│  
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration.ipynb`.
 │
 ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
 │
@@ -152,14 +142,9 @@ The directory structure of your new project looks like this:
 │   └── figures        <- Generated graphics and figures to be used in reporting
 │
 ├── requirements  
-│   ├── requirements.txt      <- The requirements file for reproducing the model analysis environment, e.g. generated with `pip freeze > requirements.txt`
-│   ├── requirements-dev.txt  <- The requirements file for code formatting and anlysis.
-│   ├── requirements-note.txt <- The requirements file for reproducing the analysis environment using jupyter notebook.
-│   ├── requirements-dempy.txt<- The requirements file for installing dempy.
-│   └── requirements-docs.txt <- The requirements file for building the project's documentation.  
+│   ├── requirements_docker.txt      <- The requirements file for reproducing the model analysis environment, e.g. generated with `pip freeze > requirements.txt`
 │
 ├── .gitignore         <- A gitignore file specifies intentionally un-tracked files that Git should ignore.
-├── .dvcignore         <- A dvcignore file specifies intentionally un-tracked files that DVC should ignore.
 ├── .dockerignore      <- Files / folders to be ignored for Docker build.
 ├── .envrc             <- Example .envrc file with environment for local development experience.
 ├── .secrets           <- Secrets and credentials should be stored here as environmental variables.
@@ -167,9 +152,7 @@ The directory structure of your new project looks like this:
 ├── .editorconfig
 ├── .pre-commit-config.yaml <- Configuration of automatic code formatting.
 │
-├── MODEL_CARD.md      <- Model cards are markdown files that accompany the models and provide very useful information.
-│
-├── pyproject.toml     <- Configuration file for several dev tools such as black, isort, mypy, coverage
+├── pyproject.toml     <- Configuration file for uv
 │
 ├── logs               <- Logs generated by Hydra/Tensorboard and Trainer loggers
 ├── test               <- directory with your tests

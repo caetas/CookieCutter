@@ -1,8 +1,0 @@
-name: python{{cookiecutter.minimal_python_version}}
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - python={{cookiecutter.minimal_python_version}}
-  - virtualenv=20.21.0
-  - pip
