@@ -76,7 +76,7 @@ def setup_env() -> None:
     logger.info(INFO + "Create your uv environment..." + TERMINATOR)
     logger.info(
         INFO
-        + "Run cd {{cookiecutter.project_slug}} && uv init --bare --python{{cookiecutter.minimal_python_version}} && uv sync --python{{cookiecutter.minimal_python_version}} && source .venv/bin/activate"
+        + "Run cd {{cookiecutter.project_slug}} && uv init --bare --python {{cookiecutter.minimal_python_version}} && uv sync --python{{cookiecutter.minimal_python_version}} && source .venv/bin/activate"
         + TERMINATOR,
     )
 
