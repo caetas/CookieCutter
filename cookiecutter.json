@@ -5,7 +5,7 @@
     "organization": "TU/e",
     "organization_email": ["none@none.pt"],
     "author_name": "Francisco Caetano",
-    "author_email": "f.t.de.espirito.santo.e.caetano@tue.nl",
+    "author_email": "f.caetano@tue.nl",
     "description": "A short description of the project. No quotes.",
     "license": ["No license", "MIT", "BSD-3-Clause", "BSD license", "ISC license", "Apache Software License 2.0", "GNU General Public License v3", "Mozilla Public License 2.0"],
     "enable_cuda": ["True", "False"],
