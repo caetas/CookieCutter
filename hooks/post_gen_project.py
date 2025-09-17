@@ -73,19 +73,11 @@ def setup_git_repo() -> None:
 
 
 def setup_env() -> None:
-    logger.info(INFO + "Creating conda environment..." + TERMINATOR)
-    os.system(
-        "conda env create " "--file environment.yml " "--name python{{cookiecutter.minimal_python_version}}",
-    )
-
-    logger.info(INFO + "Setting the virtual environment. This env can be used in all different taks." + TERMINATOR)
+    logger.info(INFO + "Create your uv environment..." + TERMINATOR)
     logger.info(
         INFO
-        + "Run conda activate python{{cookiecutter.minimal_python_version}} && cd {{cookiecutter.project_slug}} && make setup-all"
+        + "Run cd {{cookiecutter.project_slug}} && uv init --bare --python{{cookiecutter.minimal_python_version}} && uv sync --python{{cookiecutter.minimal_python_version}} && source .venv/bin/activate"
         + TERMINATOR,
-    )
-    logger.info(
-        INFO + "Install direnv (visit https://direnv.net/docs/installation.html) and run direnv allow " + TERMINATOR,
     )
 
 
