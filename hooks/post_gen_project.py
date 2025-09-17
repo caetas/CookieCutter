@@ -53,8 +53,6 @@ def remove_temp_folders(temp_folders) -> None:
 
 
 def remove_cli_script(cli_enable: str, project_slug: str) -> None:
-    print(cli_enable)
-    print(os.listdir(f"src/{project_slug}"))
     if cli_enable == "none":
         os.remove(f"src/{project_slug}/cli.py")
 
