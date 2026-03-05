@@ -116,6 +116,10 @@ def main() -> None:
     setup_git_repo()
     setup_remote_and_push(repo_url)
     setup_env(minimal_python_version)
+    logger.info(
+        SUCCESS + "Environment setup completed successfully!" + TERMINATOR,
+    )
+    
 
 
 if __name__ == "__main__":
