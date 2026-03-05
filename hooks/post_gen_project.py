@@ -44,8 +44,9 @@ def run_command(command: Sequence[str], *, check: bool = False) -> int:
 
 
 def remove_cli_script(cli_enable: str, project_slug: str) -> None:
-    if cli_enable == "none":
-        os.remove(f"src/{project_slug}/cli.py")
+    cli_path = f"src/{project_slug}/cli.py"
+    if cli_enable == "none" and os.path.exists(cli_path):
+        os.remove(cli_path)
 
 
 def is_valid_repo_url(repo_url: str) -> bool:
@@ -107,7 +108,7 @@ def main() -> None:
     repo_url = "{{ cookiecutter.repo_url }}"
     minimal_python_version = "{{ cookiecutter.minimal_python_version }}"
 
-    remove_cli_script("{{cookiecutter.command_line_interface}}", project_slug)
+    remove_cli_script("{{ cookiecutter.command_line_interface | default('none') }}", project_slug)
     logger.info(
         SUCCESS + "Project initialized successfully! You can now jump to {} folder".format(project_slug) + TERMINATOR,
     )
