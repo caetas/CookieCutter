@@ -1,8 +1,9 @@
 # {{ cookiecutter.project_name }}
 
-[![Python](https://img.shields.io/badge/python-3.10+-informational.svg)]()
-[![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://mkdocstrings.github.io)
-[![wandb](https://img.shields.io/badge/tracking-wandb-blue)](https://wandb.ai/site)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
+![uv](https://img.shields.io/badge/uv-%23DE5FE9.svg?style=for-the-badge&logo=uv&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
 {{ cookiecutter.description}}
 
