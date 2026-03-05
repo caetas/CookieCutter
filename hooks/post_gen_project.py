@@ -5,6 +5,9 @@
 import logging
 import os
 import shutil
+import subprocess
+import re
+from typing import Sequence
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("post_gen_project")
@@ -15,41 +18,29 @@ INFO = "\x1b[1;33m [INFO]: "
 HINT = "\x1b[3;33m"
 SUCCESS = "\x1b[1;32m [SUCCESS]: "
 
-DOCS_SOURCES = "docs_sources"
-ALL_TEMP_FOLDERS = [DOCS_SOURCES]
-DOCS_FILES_BY_TOOL = {
-    "mkdocs": ["help.md", "/mkdocs.yml"],
-    "sphinx": ["conf.py", "index.rst", "Makefile"],
-}
+REPO_URL_PATTERNS = (
+    r"^git@[^:\s]+:[^\s]+(?:\.git)?$",
+    r"^ssh://git@[^/\s]+/.+(?:\.git)?$",
+    r"^https://[^/\s]+/.+(?:\.git)?$",
+)
 
 
-def move_docs_files(docs_tool, docs_files, docs_sources) -> None:
-    if docs_tool == "none":
-        return
+def run_command(command: Sequence[str], *, check: bool = False) -> int:
+    logger.info(INFO + f"Running: {' '.join(command)}" + TERMINATOR)
+    try:
+        completed_process = subprocess.run(command, check=check)
+    except FileNotFoundError:
+        logger.warning(WARNING + f"Command not found: {command[0]}" + TERMINATOR)
+        return 127
+    except subprocess.CalledProcessError as error:
+        logger.warning(WARNING + f"Command failed ({error.returncode}): {' '.join(command)}" + TERMINATOR)
+        return error.returncode
 
-    root = os.getcwd()
-    docs = "docs"
-
-    logger.info("Initializing docs for %s", docs_tool)
-    if not os.path.exists(docs):
-        os.mkdir(docs)
-
-    for item in docs_files[docs_tool]:
-        dst, name = (root, item[1:]) if item.startswith("/") else (docs, item)
-        src_path = os.path.join(docs_sources, docs_tool, name)
-        dst_path = os.path.join(dst, name)
-
-        logger.info("Moving %s to %s.", src_path, dst_path)
-        if os.path.exists(dst_path):
-            os.unlink(dst_path)
-
-        os.rename(src_path, dst_path)
-
-
-def remove_temp_folders(temp_folders) -> None:
-    for folder in temp_folders:
-        logger.info("Remove temporary folder: %s", folder)
-        shutil.rmtree(folder)
+    if completed_process.returncode != 0:
+        logger.warning(
+            WARNING + f"Command failed ({completed_process.returncode}): {' '.join(command)}" + TERMINATOR,
+        )
+    return completed_process.returncode
 
 
 def remove_cli_script(cli_enable: str, project_slug: str) -> None:
@@ -57,43 +48,73 @@ def remove_cli_script(cli_enable: str, project_slug: str) -> None:
         os.remove(f"src/{project_slug}/cli.py")
 
 
+def is_valid_repo_url(repo_url: str) -> bool:
+    return any(re.match(pattern, repo_url) for pattern in REPO_URL_PATTERNS)
+
+
 def setup_git_repo() -> None:
     # Create git repo
-    os.system("git init -q")
+    run_command(["git", "init", "-q"])
     # Setup empty main and dev
-    os.system("git checkout --orphan main -q")
-    os.system('git commit --allow-empty -m "Initial commit." -q')
-    os.system("git checkout --orphan dev -q")
-    os.system('git commit --allow-empty -m "Initial commit." -q')
+    run_command(["git", "checkout", "--orphan", "main", "-q"])
+    run_command(["git", "commit", "--allow-empty", "-m", "Initial commit.", "-q"])
+    run_command(["git", "checkout", "--orphan", "dev", "-q"])
+    run_command(["git", "commit", "--allow-empty", "-m", "Initial commit.", "-q"])
     # Add cookiecutter on new branch
-    os.system("git checkout -b cookiecutter -q")
-    os.system("git add . ")
-    os.system('git commit -am "Setup cookiecutter" -q')
-    os.system('git tag -a v0.0.0 -m "Release tag for version 0.0.0"')
+    run_command(["git", "checkout", "-b", "cookiecutter", "-q"])
+    run_command(["git", "add", "."])
+    run_command(["git", "commit", "-am", "Setup cookiecutter", "-q"])
+    run_command(["git", "tag", "-a", "v0.0.0", "-m", "Release tag for version 0.0.0"])
 
 
-def setup_env() -> None:
+def setup_remote_and_push(repo_url: str) -> None:
+    if "should look like:" in repo_url:
+        logger.warning(WARNING + "repo_url is placeholder text; skipping remote setup/push." + TERMINATOR)
+        return
+    if not is_valid_repo_url(repo_url):
+        logger.warning(
+            WARNING
+            + "repo_url format is invalid; expected SSH/HTTPS git URL (e.g. git@host:org/repo.git). Skipping remote setup/push."
+            + TERMINATOR,
+        )
+        return
+
+    run_command(["git", "remote", "add", "origin", repo_url])
+    run_command(["git", "push", "--all"])
+    run_command(["git", "push", "origin", "--tags"])
+    run_command(["git", "checkout", "main"])
+    run_command(["git", "merge", "cookiecutter"])
+    run_command(["git", "push", "--set-upstream", "origin", "main"])
+    run_command(["git", "branch", "-d", "cookiecutter"])
+    run_command(["git", "push", "origin", "--delete", "cookiecutter"])
+    run_command(["git", "checkout", "dev"])
+    run_command(["git", "merge", "main"])
+    run_command(["git", "push", "--set-upstream", "origin", "dev"])
+
+
+def setup_env(minimal_python_version: str) -> None:
     logger.info(INFO + "Create your uv environment..." + TERMINATOR)
-    logger.info(
-        INFO
-        + "Run cd {{cookiecutter.project_slug}} && uv init --bare --python {{cookiecutter.minimal_python_version}} && uv sync --python{{cookiecutter.minimal_python_version}} && source .venv/bin/activate"
-        + TERMINATOR,
-    )
+    if not os.path.exists("pyproject.toml"):
+        run_command(["uv", "init", "--bare", "--python", minimal_python_version])
+    else:
+        logger.info(INFO + "Skipping uv init; pyproject.toml already exists." + TERMINATOR)
+    run_command(["uv", "sync", "--python", minimal_python_version])
 
 
 def main() -> None:
 
     project_slug = "{{ cookiecutter.project_slug }}"
+    repo_url = "{{ cookiecutter.repo_url }}"
+    minimal_python_version = "{{ cookiecutter.minimal_python_version }}"
 
-    move_docs_files("{{cookiecutter.docs_tool}}", DOCS_FILES_BY_TOOL, DOCS_SOURCES)
-    remove_temp_folders(ALL_TEMP_FOLDERS)
     remove_cli_script("{{cookiecutter.command_line_interface}}", project_slug)
     logger.info(
         SUCCESS + "Project initialized successfully! You can now jump to {} folder".format(project_slug) + TERMINATOR,
     )
     logger.info(INFO + "{}/README.md contains instructions on how to proceed.".format(project_slug) + TERMINATOR)
     setup_git_repo()
-    setup_env()
+    setup_remote_and_push(repo_url)
+    setup_env(minimal_python_version)
 
 
 if __name__ == "__main__":

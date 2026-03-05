@@ -21,8 +21,8 @@ You will need:
 
 Clone this repository (requires git ssh keys)
 
-    git clone --recursive <ssh link>
-    cd {{ cookiecutter.project_slug }}
+    git clone {{cookiecutter.repo_url}}
+    cd {{cookiecutter.project_slug}}
 
 ### Using uv
 
